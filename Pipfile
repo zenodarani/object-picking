@@ -8,6 +8,7 @@ numpy = '*'
 matplotlib = '*'
 scikit-learn = '*'
 opencv-python = '*'
+pyqt5 = "*"
 
 [dev-packages]
 
