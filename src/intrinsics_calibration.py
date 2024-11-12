@@ -16,8 +16,8 @@ cv2.destroyAllWindows()
 
 # These numbers must match the used calibration grid. The grid is formed by the internal intersection of the chessboard
 square_size = 50
-rows = 5
-columns = 7
+rows = 7
+columns = 9
 
 # Coordinates of calibration grid points w.r.t. associated frame
 chessboard_points = np.zeros((columns * rows, 3), np.float32)
