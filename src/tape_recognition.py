@@ -2,8 +2,8 @@ import numpy as np
 import cv2
 
 #%%
-# target = cv2.imread('object_images/almonds_100ms.png')
-target = cv2.imread('../object_images/detection_tryal.png')
+target = cv2.imread('../object_images/tapes_and_pipes_50ms.png')
+# target = cv2.imread('../object_images/detection_tryal.png')
 
 
 with np.load('intrinsics.npz') as item:
@@ -15,7 +15,7 @@ undistorted_target = cv2.undistort(target, mtx, dist, None, cameramtx)[280:720, 
 
 
 # target = cv2.imread('object_images/all_50ms.png')
-template = cv2.imread('../template_images/almond_template.png')
+template = cv2.imread('../template_images/tape_template.png')
 
 target_gray = cv2.cvtColor(undistorted_target, cv2.COLOR_BGR2GRAY)
 template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
@@ -45,16 +45,15 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 
 #%%
-n_almonds = 12
 best_distance = float('inf')
-error = 20
+error = 10
 
 valid_matches = []
 template_contour_length = cv2.arcLength(template_contour, True)
 
 for c in target_contours:
-    match = cv2.matchShapes(template_contour, c, 3, 0.0)
-    if match <= 0.5 and template_contour_length - error <= cv2.arcLength(c, True) <= template_contour_length + error:
+    match = cv2.matchShapes(template_contour, c, 3, 0)
+    if match <= 0.1 and template_contour_length - error <= cv2.arcLength(c, True) <= template_contour_length + error:
         valid_matches.append(c)
 #%%
 target_matched = undistorted_target.copy()
