@@ -2,3 +2,5 @@ object_images
 .idea
 Pipfile.lock
 /Pipfile.lock
+*.pkl
+*.npz
