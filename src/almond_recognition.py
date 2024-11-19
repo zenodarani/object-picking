@@ -3,9 +3,9 @@ import cv2
 
 #%%
 # target = cv2.imread('object_images/almonds_100ms.png')[250:, 200:1080]
-target = cv2.imread('object_images/detection_tryal.png')[250:750, 210: 1100]
+target = cv2.imread('./template_images/detection_tryal.png')[250:750, 210: 1100]
 # target = cv2.imread('object_images/all_50ms.png')
-template = cv2.imread('template_images/almond_template.png')
+template = cv2.imread('./template_images/almond_template.png')
 
 target_gray = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
 template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
