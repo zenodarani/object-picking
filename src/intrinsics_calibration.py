@@ -15,7 +15,7 @@ cv2.destroyAllWindows()
 
 
 # These numbers must match the used calibration grid. The grid is formed by the internal intersection of the chessboard
-square_size = 50
+square_size = 34
 rows = 7
 columns = 9
 
