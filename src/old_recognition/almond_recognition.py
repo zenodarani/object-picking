@@ -2,11 +2,11 @@ import numpy as np
 import cv2
 
 #%%
-target = cv2.imread('../object_images/markers_and_valves_100ms.png')
-# target = cv2.imread('../object_images/detection_tryal.png')
+# target = cv2.imread('object_images/almonds_100ms.png')
+target = cv2.imread('../../object_images/detection_tryal.png')
 
 
-with np.load('intrinsics.npz') as item:
+with np.load('../intrinsics.npz') as item:
     mtx, dist, rvecs, tvecs = [item[i] for i in ('mtx', 'dist', 'rvecs', 'tvecs')]
 
 h,  w = target.shape[:2]
@@ -15,48 +15,47 @@ undistorted_target = cv2.undistort(target, mtx, dist, None, cameramtx)[280:720, 
 
 
 # target = cv2.imread('object_images/all_50ms.png')
-template = cv2.imread('../template_images/marker_template.png')
+template = cv2.imread('../../template_images/almond_template.png')
 
 target_gray = cv2.cvtColor(undistorted_target, cv2.COLOR_BGR2GRAY)
 template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
 
-
 #%%
-_, target_thresh = cv2.threshold(target_gray, 25, 255, cv2.THRESH_BINARY)
-_, template_thresh = cv2.threshold(template_gray, 50, 255, cv2.THRESH_BINARY)
-
-#%%
-cv2.imshow('Matched shape', target_thresh)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
-#%%
-cv2.imshow('Matched shape', template_thresh)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+_, target_thresh = cv2.threshold(target_gray, 120, 255, cv2.THRESH_BINARY)
+_, template_thresh = cv2.threshold(template_gray, 120, 255, cv2.THRESH_BINARY)
 
 #%%
 target_contours, _ = cv2.findContours(target_thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 template_contours, _ = cv2.findContours(template_thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-template_contour = max(template_contours, key=lambda c: c.shape[0])
+template_contour = template_contours[0]
+#%%
+# template_with_contours = template.copy()
+# cv2.drawContours(template_with_contours, template_contours, -1, (0,0,255), 3)
+# cv2.imshow("Contours", template_with_contours)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
 
 
 #%%
+target_with_contours = undistorted_target.copy()
+cv2.drawContours(target_with_contours, target_contours, -1, (0,0,255), 3)
+cv2.imshow("Contours", target_with_contours)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+#%%
+n_almonds = 12
 best_distance = float('inf')
-error = 300
+error = 20
 
 valid_matches = []
 template_contour_length = cv2.arcLength(template_contour, True)
 
 for c in target_contours:
-    match = cv2.matchShapes(template_contour, c, 3, 0)
-    if match <= 1 and template_contour_length - error <= cv2.arcLength(c, True) <= template_contour_length + error:
+    match = cv2.matchShapes(template_contour, c, 3, 0.0)
+    if match <= 0.5 and template_contour_length - error <= cv2.arcLength(c, True) <= template_contour_length + error:
         valid_matches.append(c)
-
-
-
-
 #%%
 target_matched = undistorted_target.copy()
 cv2.drawContours(target_matched, valid_matches, -1, (0, 255, 0), 3)

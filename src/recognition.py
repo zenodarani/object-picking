@@ -1,7 +1,8 @@
 import numpy as np
 import cv2
-def recognition(target_path, template_path, match_thresh=0.1, contour_error = 10, template_thresh = 120, target_thresh=120):
-    target = cv2.imread(target_path)
+def recognition(template_path, match_thresh=0.1, contour_error = 10, template_thresh = 120, target_thresh=120, target=None, target_path=None):
+    if not target:
+        target = cv2.imread(target_path)
 
     with np.load('intrinsics.npz') as item:
         mtx, dist, rvecs, tvecs = [item[i] for i in ('mtx', 'dist', 'rvecs', 'tvecs')]
@@ -32,7 +33,6 @@ def recognition(target_path, template_path, match_thresh=0.1, contour_error = 10
     template_contour_length = cv2.arcLength(template_contour, True)
     for c in target_contours:
         match = cv2.matchShapes(template_contour, c, 3, 0)
-        print(match)
         if match <= match_thresh and template_contour_length - contour_error <= cv2.arcLength(c,True) <= template_contour_length + contour_error:
             valid_matches.append(c)
     target_matched = undistorted_target.copy()
@@ -90,3 +90,4 @@ if __name__ == '__main__':
 
     # contours, means, eigenvectors = recognition('../object_images/markers_and_valves_100ms.png', '../template_images/marker_template.png', match_thresh=1, contour_error=300, target_thresh=25, template_thresh=50)
     contours, means, eigenvectors = recognition('../object_images/hooks_and_caps_100ms.png', '../template_images/cap_template.png', match_thresh=3, contour_error=100, target_thresh=25, template_thresh=50)
+    print(means)

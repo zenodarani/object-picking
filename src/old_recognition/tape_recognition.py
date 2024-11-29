@@ -2,11 +2,11 @@ import numpy as np
 import cv2
 
 #%%
-target = cv2.imread('../object_images/tapes_and_pipes_50ms.png')
+target = cv2.imread('../../object_images/tapes_and_pipes_50ms.png')
 # target = cv2.imread('../object_images/detection_tryal.png')
 
 
-with np.load('intrinsics.npz') as item:
+with np.load('../intrinsics.npz') as item:
     mtx, dist, rvecs, tvecs = [item[i] for i in ('mtx', 'dist', 'rvecs', 'tvecs')]
 
 h,  w = target.shape[:2]
@@ -15,7 +15,7 @@ undistorted_target = cv2.undistort(target, mtx, dist, None, cameramtx)[280:720, 
 
 
 # target = cv2.imread('object_images/all_50ms.png')
-template = cv2.imread('../template_images/tape_template.png')
+template = cv2.imread('../../template_images/tape_template.png')
 
 target_gray = cv2.cvtColor(undistorted_target, cv2.COLOR_BGR2GRAY)
 template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
