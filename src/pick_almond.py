@@ -17,15 +17,20 @@ rb.move_to_pose(tr.DEFAULT_POSE, speed=100)
 
 img = rb.grab_image()
 
-contours, means, eigenvectors = recognition('../template_images/almond_template.png',
-                                            match_thresh=0.5, contour_error=20,
-                                            target_thresh=120, template_thresh=120, target=img)
+contours, means, eigenvectors = recognition('../template_images/marker_template.png', match_thresh=0.3, contour_error=300, target=img)
+moving_z = -50
+
+# move to first with rotation
+
 
 for i in range(len(means)):
-    rb.move_to_pose(tr.DEFAULT_POSE, speed=100)
+    home_speed = 400
+    speed = 100
+    rb.move_to_pose(tr.DEFAULT_POSE, speed=speed)
     rb_p = tr.to_rb(means[i][0])
-    pose = [rb_p[0][0], rb_p[1][0], rb_p[2][0] + 10, 179, 0, -23]
-    print(pose)
+    pose = [rb_p[0][0], rb_p[1][0], moving_z, 179, 0, np.arctan2(*eigenvectors[i][1]) * 180 / np.pi - 180]
+    rb.move_to_pose(pose, speed=speed)
+    pose = [rb_p[0][0], rb_p[1][0], rb_p[2][0] + 10, 179, 0, np.arctan2(*eigenvectors[i][1]) * 180 / np.pi - 180]
+    rb.move_to_pose(pose, speed=speed)
 
-    rb.move_to_pose(pose, speed=100)
     time.sleep(3)

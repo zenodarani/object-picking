@@ -12,7 +12,7 @@ class CoordinatesTransform:
               [0, 0, 1, 0]])
 
     DEFAULT_POSE = [221, -77, -6,
-                    179, 0, -23]
+                    179, 0, 0]
 
     def __init__(self, initrinsics_path, extrinsics_path):
         with np.load(initrinsics_path) as item:
