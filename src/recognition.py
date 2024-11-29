@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 def recognition(template_path, match_thresh=0.1, contour_error = 10, template_thresh = 120, target_thresh=120, target=None, target_path=None):
-    if not target:
+    if target is None:
         target = cv2.imread(target_path)
 
     with np.load('intrinsics.npz') as item:
@@ -9,7 +9,8 @@ def recognition(template_path, match_thresh=0.1, contour_error = 10, template_th
 
     h, w = target.shape[:2]
     cameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (w, h), 1, (w, h))
-    undistorted_target = cv2.undistort(target, mtx, dist, None, cameramtx)[280:720, 270:1050]
+    #undistorted_target = cv2.undistort(target, mtx, dist, None, cameramtx)[280:720, 270:1050]
+    undistorted_target = target[270:730, 260:1060]
 
     template = cv2.imread(template_path)
 
@@ -61,6 +62,8 @@ def recognition(template_path, match_thresh=0.1, contour_error = 10, template_th
             continue
 
         mean_temp, eigenvectors_temp = cv2.PCACompute(connected_areas[i].astype(np.float32), mean=np.array([]))
+        mean_temp[0][0] += 260
+        mean_temp[0][1] += 270
         means.append(mean_temp)
         eigenvectors.append(eigenvectors_temp)
 
@@ -88,6 +91,6 @@ if __name__ == '__main__':
 
 
 
-    # contours, means, eigenvectors = recognition('../object_images/markers_and_valves_100ms.png', '../template_images/marker_template.png', match_thresh=1, contour_error=300, target_thresh=25, template_thresh=50)
-    contours, means, eigenvectors = recognition('../object_images/hooks_and_caps_100ms.png', '../template_images/cap_template.png', match_thresh=3, contour_error=100, target_thresh=25, template_thresh=50)
+    contours, means, eigenvectors = recognition('../object_images/markers_and_valves_100ms.png', '../template_images/marker_template.png', match_thresh=1, contour_error=300, target_thresh=25, template_thresh=50)
+    # contours, means, eigenvectors = recognition('../object_images/hooks_and_caps_100ms.png', '../template_images/cap_template.png', match_thresh=3, contour_error=100, target_thresh=25, template_thresh=50)
     print(means)

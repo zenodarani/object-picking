@@ -20,7 +20,7 @@ P = np.array([[1, 0, 0, 0],
 
 px_p = [800, 550]
 
-Zc = 924
+Zc = 835
 
 c_xyz = inv(K) @ np.array([[Zc*px_p[0]], [Zc * px_p[1]], [Zc]])
 c_xyz = np.append(c_xyz,[[1]], axis=0)
@@ -33,5 +33,5 @@ init_pos = rb.get_current_cart_pos()
 rb.move_to_pose([init_pos[0], init_pos[1], init_pos[2] + 100, init_pos[3], init_pos[4], init_pos[5]], speed=600)
 
 #%%
-rb.move_to_pose([rb_p[0][0], rb_p[1][0], rb_p[2][0], 179, 1, -23], speed=600)
+rb.move_to_pose([rb_p[0][0], rb_p[1][0], rb_p[2][0], 179, 1, -23], speed=100)
 
