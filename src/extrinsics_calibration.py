@@ -59,7 +59,7 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 
 # List the indices of the corners you touched with the robot (at least 4!)
-#ind_corner = [0, columns - 1, (rows - 1) * columns, ] # or whatever indices you like, e.g. i choose:
+#ind_corner = [0, columns - 1, (rows - 1) * columns, ] # or whatever i<ndices you like, e.g. i choose:
 #ind_corner = [0, columns-1, (rows-1)*columns, rows*columns -1]
 ind_corner = [0, 8, 45, 53]
 

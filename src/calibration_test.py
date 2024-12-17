@@ -18,7 +18,7 @@ P = np.array([[1, 0, 0, 0],
               [0, 1, 0, 0],
               [0, 0, 1, 0]])
 
-px_p = [800, 550]
+px_p = [1000, 400]
 
 Zc = 835
 
@@ -30,8 +30,12 @@ rb_p = rb_p[:-1]
 
 #%%
 init_pos = rb.get_current_cart_pos()
-rb.move_to_pose([init_pos[0], init_pos[1], init_pos[2] + 100, init_pos[3], init_pos[4], init_pos[5]], speed=600)
+print(init_pos)
+rb.move_to_pose([init_pos[0], init_pos[1], init_pos[2], init_pos[3], init_pos[4], init_pos[5]], speed=600)
 
 #%%
-rb.move_to_pose([rb_p[0][0], rb_p[1][0], rb_p[2][0], 179, 1, -23], speed=100)
+print(rb_p)
+rb.move_to_pose([rb_p[0][0], rb_p[1][0], rb_p[2][0] + 100, 179, 1, -23], speed=100)
 
+rb.gripper_close()
+rb.gripper_open()

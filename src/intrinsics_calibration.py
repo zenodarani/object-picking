@@ -8,16 +8,16 @@ import glob
 ####
 
 # We will use a chessboard as a calibrator. Do we see well al the squares?
-chessboard_img = cv2.imread('../intrinsics_images/cal_1.png')
+chessboard_img = cv2.imread('../intrinsics_images_3/cal_1.png')
 cv2.imshow('chessboard', chessboard_img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
 
 # These numbers must match the used calibration grid. The grid is formed by the internal intersection of the chessboard
-square_size = 34
+square_size = 50
 rows = 7
-columns = 9
+columns = 10
 
 # Coordinates of calibration grid points w.r.t. associated frame
 chessboard_points = np.zeros((columns * rows, 3), np.float32)
@@ -29,7 +29,7 @@ objpoints = []  # 3d points in real world space, expressed in the calibrator's n
 imgpoints = []  # 2d points in image plane.
 
 # We could use multiple pictures of the calibrator, taken in different poses. In this case, we use one.
-images = glob.glob("../intrinsics_images/*.png")
+images = glob.glob("../intrinsics_images_3/*.png")
 # images = ['CHESSBOARD.PNG']
 
 # termination criteria for subpixel refinement
@@ -45,6 +45,7 @@ for fname in images:
 
     # If found, add object points, image points (after refining them)
     if ret == True:
+
         objpoints.append(chessboard_points)  # defined by hand, by us
 
         corners2 = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
