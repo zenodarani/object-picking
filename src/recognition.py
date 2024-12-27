@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+
 def recognition(template_path, match_thresh=0.1, contour_error = 10, template_thresh = 120, target_thresh=120, target=None, target_path=None):
     if target is None:
         target = cv2.imread(target_path)
@@ -16,13 +17,25 @@ def recognition(template_path, match_thresh=0.1, contour_error = 10, template_th
 
     target_gray = cv2.cvtColor(undistorted_target, cv2.COLOR_BGR2GRAY)
     template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
-
+    # template_gray = cv2.equalizeHist(template_gray)  #battery
 
     _, target_thresh = cv2.threshold(target_gray, target_thresh, 255, cv2.THRESH_BINARY)
     _, template_thresh = cv2.threshold(template_gray, template_thresh, 255, cv2.THRESH_BINARY)
 
+    template_thresh = cv2.morphologyEx(template_thresh, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
+    # template_thresh = cv2.morphologyEx(template_thresh, cv2.MORPH_OPEN, np.ones((12, 12), np.uint8)) #battery
+
+
     target_contours, _ = cv2.findContours(target_thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    template_contours, _ = cv2.findContours(template_thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    template_contours, _ = cv2.findContours(np.uint8(template_thresh), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    #
+    # cv2.imshow('Template Binary', template_thresh)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+
+    cv2.imshow('Target Binary', target_thresh)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
     template_contour = max(template_contours, key=lambda c: c.shape[0])
 
@@ -34,10 +47,18 @@ def recognition(template_path, match_thresh=0.1, contour_error = 10, template_th
     template_contour_length = cv2.arcLength(template_contour, True)
     for c in target_contours:
         match = cv2.matchShapes(template_contour, c, 3, 0)
-        if match <= match_thresh and template_contour_length - contour_error <= cv2.arcLength(c,True) <= template_contour_length + contour_error:
+        if match <= match_thresh and abs(template_contour_length - cv2.arcLength(c,True)) <= contour_error:
             valid_matches.append(c)
+        print(f"Match: {match}")
+        print("Length errors: ", abs(template_contour_length - cv2.arcLength(c,True)))
+
+
     target_matched = undistorted_target.copy()
     cv2.drawContours(target_matched, valid_matches, -1, (0, 255, 0), 3)
+
+    cv2.imshow('Target Countours', target_matched)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
     detected_only_binary = np.zeros_like(target_gray)
     cv2.drawContours(detected_only_binary, valid_matches, -1, 255, thickness=cv2.FILLED)
@@ -80,17 +101,18 @@ def recognition(template_path, match_thresh=0.1, contour_error = 10, template_th
 
     return valid_matches, means, eigenvectors
 
-
+import glob
 if __name__ == '__main__':
     # contours, means, eigenvectors = recognition('../object_images/tapes_and_pipes_50ms.png', '../template_images/tape_template.png', match_thresh=0.005, contour_error=10)
     # contours, means, eigenvectors = recognition('../object_images/detection_tryal.png', '../template_images/tape_template.png', match_thresh=0.005, contour_error=20)
     # contours, means, eigenvectors = recognition('../object_images/all_100ms.png', '../template_images/hook_template.png', match_thresh=3, contour_error=95)
-    # contours, means, eigenvectors = recognition('../object_images/perfumes_and_batteries_100ms.png', '../template_images/battery_template.png', match_thresh=0.5, contour_error=300)
+    for target_path in glob.glob('../object_images/all*'):
+        contours, means, eigenvectors = recognition('../template_images/almond_template.png', target_path=target_path, match_thresh=2, contour_error=300,target_thresh=100, template_thresh=30)
+        break
 
 
 
 
-
-    contours, means, eigenvectors = recognition('../object_images/markers_and_valves_100ms.png', '../template_images/marker_template.png', match_thresh=1, contour_error=300, target_thresh=25, template_thresh=50)
+    # contours, means, eigenvectors = recognition ('../template_images/marker_template.png',target_path='../object_images/markers_and_valves_100ms.png', match_thresh=1, contour_error=300, target_thresh=25, template_thresh=50)
     # contours, means, eigenvectors = recognition('../object_images/hooks_and_caps_100ms.png', '../template_images/cap_template.png', match_thresh=3, contour_error=100, target_thresh=25, template_thresh=50)
     print(means)
