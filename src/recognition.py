@@ -19,21 +19,21 @@ def recognition(template_path, match_thresh=0.1, contour_error = 10, template_th
     template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
     # template_gray = cv2.equalizeHist(template_gray)  #battery
 
-    _, target_thresh = cv2.threshold(target_gray, target_thresh, 255, cv2.THRESH_BINARY)
-    _, template_thresh = cv2.threshold(template_gray, template_thresh, 255, cv2.THRESH_BINARY)
+    _, target_binary = cv2.threshold(target_gray, target_thresh, 255, cv2.THRESH_BINARY)
+    _, template_binary = cv2.threshold(template_gray, template_thresh, 255, cv2.THRESH_BINARY)
 
-    template_thresh = cv2.morphologyEx(template_thresh, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
-    # template_thresh = cv2.morphologyEx(template_thresh, cv2.MORPH_OPEN, np.ones((12, 12), np.uint8)) #battery
+    template_binary = cv2.morphologyEx(template_binary, cv2.MORPH_OPEN, np.ones((3, 3), np.uint8))
+    # template_binary = cv2.morphologyEx(template_binary, cv2.MORPH_OPEN, np.ones((12, 12), np.uint8)) #battery
 
 
-    target_contours, _ = cv2.findContours(target_thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    template_contours, _ = cv2.findContours(np.uint8(template_thresh), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    target_contours, _ = cv2.findContours(target_binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    template_contours, _ = cv2.findContours(np.uint8(template_binary), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     #
-    # cv2.imshow('Template Binary', template_thresh)
+    # cv2.imshow('Template Binary', template_binary)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
 
-    cv2.imshow('Target Binary', target_thresh)
+    cv2.imshow('Target Binary', target_binary)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
