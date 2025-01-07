@@ -17,7 +17,9 @@ rb.move_to_pose(tr.DEFAULT_POSE, speed=100)
 
 img = rb.grab_image()
 
-contours, means, eigenvectors = recognition('../template_images/marker_template.png', match_thresh=0.5, target_thresh=50, contour_error=70, template_thresh=25, target=img)
+img = tr.undistort(img)
+
+contours, means, eigenvectors = recognition('../template_images/marker_template.png', match_thresh=1000, contour_error=100, target_thresh=10, template_thresh=10, target=img)
 moving_z = -50
 
 

@@ -1,0 +1,5 @@
+path: /Users/matteo/Documents/SUPSI_2022-/Anno_2024-2025/1°Semestre/Applied Case Studies/Exams/Robot_project/object-picking/src/Yolo//datasets
+train: train/images
+val: val/images
+nc: 1  # Numero di classi (solo mandorle)
+names: ["mandorla"]
