@@ -7,23 +7,23 @@ pretrained_model = "yolov8s.pt"
 def train_yolo():
     model = YOLO(pretrained_model)
     model.train(
-        data=dataset_yaml,         # Dataset YAML
-        epochs=20,                 # Numero di epoche per il fine-tuning
-        imgsz=640,                 # Dimensione delle immagini
-        project="./models",        # Directory di output
-        name="custom_train",       # Nome del task di training
-        verbose=True               # Stampa informazioni dettagliate
+        data=dataset_yaml,
+        epochs=20,
+        imgsz=640,
+        project="./models",
+        name="custom_train",
+        verbose=True
     )
 
 def predict_yolo(image_path):
     model = YOLO("./models/custom_train/weights/best.pt")
     results = model.predict(
-        source=image_path,        # Percorso dell'immagine o video
-        imgsz=640,                # Dimensione immagine per inferenza
-        conf=0.5,                 # Soglia di confidenza
-        save=True,                # Salva i risultati
-        project="runs/predict",   # Directory di output
-        name="custom_predict"     # Nome del task di inferenza
+        source=image_path,
+        imgsz=640,
+        conf=0.5,
+        save=True,
+        project="runs/predict",
+        name="custom_predict"
     )
     return results
 
