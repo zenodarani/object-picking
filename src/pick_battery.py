@@ -1,5 +1,4 @@
 import time
-
 import numpy as np
 import pickle
 from vrobot_control import vrobot
@@ -19,15 +18,16 @@ img = rb.grab_image()
 
 img = tr.undistort(img)
 
-contours, means, eigenvectors = recognition('../template_images/marker_template.png', match_thresh=1000, contour_error=100, target_thresh=10, template_thresh=10, target=img)
+contours, means, eigenvectors = recognition('../template_images/battery_template.png', match_thresh=1,
+                                            contour_error=66, template_thresh=230, target_thresh=120, target=img)
 moving_z = -50
 
 
 left_offset = -1
 
 for i in range(len(means)):
-    home_speed = 400
-    speed = 100
+    home_speed = 100
+    speed = 50
     rb.move_to_pose(tr.DEFAULT_POSE, speed=speed)
     rb.gripper_open()
 

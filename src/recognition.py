@@ -8,8 +8,8 @@ def recognition(template_path, match_thresh=0.1, contour_error = 10, template_th
         mtx, dist, rvecs, tvecs = [item[i] for i in ('mtx', 'dist', 'rvecs', 'tvecs')]
 
     h, w = target.shape[:2]
-    cameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (w, h), 1, (w, h))
-    #undistorted_target = cv2.undistort(target, mtx, dist, None, cameramtx)[280:720, 270:1050]
+    #cameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (w, h), 1, (w, h))
+    #undistorted_target = cv2.undistort(target, mtx, dist, None, cameramtx)[270:730, 260:1060]
     undistorted_target = target[270:730, 260:1060]
 
     template = cv2.imread(template_path)
@@ -29,6 +29,13 @@ def recognition(template_path, match_thresh=0.1, contour_error = 10, template_th
     target_with_contours = undistorted_target.copy()
     cv2.drawContours(target_with_contours, target_contours, -1, (0, 0, 255), 3)
 
+    cv2.imshow('Template', template_thresh)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+    cv2.imshow('Target', target_thresh)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
     valid_matches = []
     template_contour_length = cv2.arcLength(template_contour, True)

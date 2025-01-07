@@ -17,6 +17,8 @@ rb.move_to_pose(tr.DEFAULT_POSE, speed=600)
 
 img = rb.grab_image()
 
+img = tr.undistort(img)
+
 contours, means, eigenvectors = recognition('../template_images/tape_template.png', match_thresh=0.01, contour_error=120, target=img)
 moving_z = -50
 

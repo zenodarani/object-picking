@@ -19,7 +19,8 @@ img = rb.grab_image()
 
 img = tr.undistort(img)
 
-contours, means, eigenvectors = recognition('../template_images/marker_template.png', match_thresh=1000, contour_error=100, target_thresh=10, template_thresh=10, target=img)
+contours, means, eigenvectors = recognition('../template_images/battery_template.png',
+                                            match_thresh=3, contour_error=95, target=img)
 moving_z = -50
 
 
