@@ -5,13 +5,8 @@ def recognition(template_path, match_thresh=0.1, contour_error = 10, template_th
     if target is None:
         target = cv2.imread(target_path)
 
-    with np.load('intrinsics.npz') as item:
-        mtx, dist, rvecs, tvecs = [item[i] for i in ('mtx', 'dist', 'rvecs', 'tvecs')]
 
-    h, w = target.shape[:2]
-    cameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (w, h), 1, (w, h))
-    #undistorted_target = cv2.undistort(target, mtx, dist, None, cameramtx)[280:720, 270:1050]
-    undistorted_target = target[270:760, 260:1060]
+    undistorted_target = target[270:730, 260:1060]
 
     template = cv2.imread(template_path)
 
@@ -28,7 +23,7 @@ def recognition(template_path, match_thresh=0.1, contour_error = 10, template_th
 
     target_contours, _ = cv2.findContours(target_binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     template_contours, _ = cv2.findContours(np.uint8(template_binary), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
+    #
     # cv2.imshow('Template Binary', template_binary)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
@@ -42,6 +37,13 @@ def recognition(template_path, match_thresh=0.1, contour_error = 10, template_th
     target_with_contours = undistorted_target.copy()
     cv2.drawContours(target_with_contours, target_contours, -1, (0, 0, 255), 3)
 
+    # cv2.imshow('Template', template_thresh)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+
+    cv2.imshow('Target', target_thresh)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
     valid_matches = []
     template_contour_length = cv2.arcLength(template_contour, True)
@@ -62,15 +64,12 @@ def recognition(template_path, match_thresh=0.1, contour_error = 10, template_th
 
     detected_only_binary = np.zeros_like(target_gray)
     cv2.drawContours(detected_only_binary, valid_matches, -1, 255, thickness=cv2.FILLED)
-    #
-    # cv2.imshow('Connected Components', detected_only_binary)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
 
 
     num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(detected_only_binary, connectivity=4)
     connected_areas = []
     barycenters = []
+
     for label in range(1, num_labels):
         component_mask = (labels == label)
         y_coords, x_coords = np.where(component_mask)
@@ -86,17 +85,13 @@ def recognition(template_path, match_thresh=0.1, contour_error = 10, template_th
         if len(connected_areas[i]) <= 10:
             continue
 
-
         mean_temp, eigenvectors_temp = cv2.PCACompute(connected_areas[i].astype(np.float32), mean=np.array([]))
         mean_temp[0][0] += 260
         mean_temp[0][1] += 270
         means.append(mean_temp)
-
         eigenvectors.append(eigenvectors_temp)
 
         barycenter_temp = tuple(barycenters[i].astype(int))
-
-
         cv2.circle(target_matched, barycenter_temp, 5, (0, 0, 255), -1)
         scale = 50
         for vec in eigenvectors_temp:
@@ -108,19 +103,3 @@ def recognition(template_path, match_thresh=0.1, contour_error = 10, template_th
     cv2.destroyAllWindows()
 
     return valid_matches, means, eigenvectors
-
-import glob
-if __name__ == '__main__':
-    # contours, means, eigenvectors = recognition('../object_images/tapes_and_pipes_50ms.png', '../template_images/tape_template.png', match_thresh=0.005, contour_error=10)
-    # contours, means, eigenvectors = recognition('../object_images/detection_tryal.png', '../template_images/tape_template.png', match_thresh=0.005, contour_error=20)
-    # contours, means, eigenvectors = recognition('../object_images/all_100ms.png', '../template_images/hook_template.png', match_thresh=3, contour_error=95)
-    for target_path in glob.glob('../object_images/all*'):
-        contours, means, eigenvectors = recognition('../template_images/almond_template.png', target_path=target_path, match_thresh=2, contour_error=300,target_thresh=100, template_thresh=30)
-        break
-
-
-
-
-    # contours, means, eigenvectors = recognition ('../template_images/marker_template.png',target_path='../object_images/markers_and_valves_100ms.png', match_thresh=1, contour_error=300, target_thresh=25, template_thresh=50)
-    # contours, means, eigenvectors = recognition('../object_images/hooks_and_caps_100ms.png', '../template_images/cap_template.png', match_thresh=3, contour_error=100, target_thresh=25, template_thresh=50)
-    print(means)

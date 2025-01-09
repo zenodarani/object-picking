@@ -1,5 +1,7 @@
 import numpy as np
 import cv2
+from numpy.ma.core import angle
+
 
 def recognition(template_path, match_thresh=0.1, contour_error = 10, template_thresh = 120, target_thresh=120, target=None, target_path=None):
     if target is None:
@@ -72,7 +74,6 @@ def recognition(template_path, match_thresh=0.1, contour_error = 10, template_th
 
     connected_areas = []
     barycenters = []
-    farthest_points = []
 
     coords = []
     for label in range(1, num_labels):  # Skip the background label
@@ -87,6 +88,7 @@ def recognition(template_path, match_thresh=0.1, contour_error = 10, template_th
         coords.append(coordinates)
         barycenters.append(barycenter)
 
+    tmp = target_matched.copy()
 
     means = []
     eigenvectors = []
@@ -121,19 +123,37 @@ def recognition(template_path, match_thresh=0.1, contour_error = 10, template_th
         farthest_point = coords[i][np.argmax(distances)]
 
 
-        angle_radians = 40
-
+        # angle_radians = 2.3
+        angle_radians = np.radians(135)
+        print(angle_radians)
         rotation_matrix = np.array([
             [np.cos(angle_radians), -np.sin(angle_radians)],
             [np.sin(angle_radians), np.cos(angle_radians)]
         ])
 
-        # Rotate the eigenvectors
         rotated_eigenvector1 = np.dot(rotation_matrix, eigenvectors_temp[0])
         rotated_eigenvector2 = np.dot(rotation_matrix, eigenvectors_temp[1])
 
+        cv2.line(tmp, (new_barycenter[0],0), (new_barycenter[0], target_matched.shape[1]), (0, 0, 155), 2)
+        cv2.circle(tmp, farthest_point, 5, (255, 0, 255), -1)
+
+        cv2.circle(target_matched, new_barycenter, 5, (0, 0, 255), -1)
+
+        tmp_end_point1 = (int(new_barycenter[0] + (scale + 5) * rotated_eigenvector1[0]),
+                          int(new_barycenter[1] + (scale + 5) * rotated_eigenvector1[1]))
+
+        tmp_end_point2 = (int(op(new_barycenter[0], scale * rotated_eigenvector2[0])),
+                          int(op(new_barycenter[1], scale * rotated_eigenvector2[1])))
+
+        cv2.line(tmp, new_barycenter, tmp_end_point1, (255, 255, 0), 2)
+        cv2.line(tmp, new_barycenter, tmp_end_point2, (255, 0, 0), 2)
+
+
+
         if new_barycenter[0] < farthest_point[0]:
-            additional_radians = 90
+            # additional_radians = 1.7
+            additional_radians = np.radians(100)
+            print(additional_radians)
             rotation_matrix = np.array([
                 [np.cos(additional_radians), -np.sin(additional_radians)],
                 [np.sin(additional_radians), np.cos(additional_radians)]])
@@ -150,10 +170,15 @@ def recognition(template_path, match_thresh=0.1, contour_error = 10, template_th
 
         cv2.circle(target_matched, new_barycenter, 5, (0, 0, 255), -1)
 
+
         cv2.line(target_matched, new_barycenter, new_end_point1, (255, 255, 0), 2)
         cv2.line(target_matched, new_barycenter, new_end_point2, (255, 0, 0), 2)
+
+    cv2.imshow('Barycenter and Principal Components with ambiguity', tmp)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
     cv2.imshow('Barycenter and Principal Components', target_matched)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    return valid_matches, means, eigenvectors
+    return valid_matches, new_barycenter, (rotated_eigenvector1, rotated_eigenvector2)

@@ -43,35 +43,4 @@ for i,im in enumerate(images):
 
 
     equ_rgb = cv2.cvtColor(im, cv2.COLOR_GRAY2RGB)
-    recognition(f'../template_images/pipe_template.png', target=equ_rgb, target_thresh=100, match_thresh=0.15, contour_error=130)
-    # recognition(f'../template_images/marker_template.png', target=equ_rgb, target_thresh=50, match_thresh=2, contour_error=300, template_thresh=50)
-    # recognition(f'../template_images/battery_template.png', target=equ_rgb, target_thresh=50, match_thresh=0.1, contour_error=100, template_thresh=150)
-
-    # ALMOND
-    # recognition(f'../template_images/almond_template.png', target=equ_rgb, target_thresh=100, match_thresh=0.5, contour_error=30)
-    #TAPE
-    # recognition(f'../template_images/tape_template.png', target=equ_rgb, target_thresh=100, match_thresh=0.01, contour_error=75)
-    #MARKER
-    # recognition(f'../template_images/marker_template.png', target=equ_rgb, target_thresh=50, match_thresh=2, contour_error=300, template_thresh=50)
-    #CAP
-    # recognition(f'../template_images/cap_template.png', target=equ_rgb, target_thresh=50, match_thresh=0.15, contour_error=100, template_thresh=50)
-    #PIPE
-    # recognition(f'../template_images/pipe_template.png', target=equ_rgb, target_thresh=100, match_thresh=0.15, contour_error=130)
-    #VALVE
-    # recognition(f'../template_images/valve_template.png', target=equ_rgb, target_thresh=100, match_thresh=0.1, contour_error=50)
-    # don't do opening when you don't do hist eq
-    #PERFUME
-    # recognition(f'../template_images/valve_template.png', target=equ_rgb, target_thresh=100, match_thresh=0.5, contour_error=150, template_thresh=70)
-    # always do hist eq
-
-
-    #---- TO FIX ----
-    # HOOK
-    #opening of 5x5 or 7x7 depending on brightness
-    # don't do opening when you don't do hist eq
-
-    # BATTERY
-    #works for all images but 5ms
-    #needs TEMPLATE hist eq + opening
-    # template_gray = cv2.equalizeHist(template_gray)  #careful
-    # template_thresh = cv2.morphologyEx(template_thresh, cv2.MORPH_OPEN, np.ones((12, 12), np.uint8)) #battery
+    recognition(f'../template_images/{object}_template.png', target=equ_rgb, target_thresh=100, match_thresh=0.15, contour_error=130)
